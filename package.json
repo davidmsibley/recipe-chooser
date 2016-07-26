@@ -1,0 +1,17 @@
+{
+  "name": "recipe-etl",
+  "version": "1.0.0",
+  "description": "",
+  "main": "downloader.js",
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "jsdom": "^9.4.1",
+    "request": "^2.74.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

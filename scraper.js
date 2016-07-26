@@ -1,17 +1,47 @@
-var jsdom = require("jsdom");
+let jsdom = require("jsdom");
+let promisify = require('bluebird').promisify;
+let dom = promisify(jsdom.env);
 
-var clean = function clean ($this) {
+function clean ($this) {
     return $this.text().replace(/\n/g, '');
 };
 
-var i = 430;
+function isUnit(str) {
+    return false; //TODO
+}
 
-jsdom.env({
-    file: __dirname + "/downloaded/" + i + ".html",
-    scripts: ["http://code.jquery.com/jquery.js"],
-    done: function (err, window) {
-        var result = {};
-        var $ = window.$;
+function parseIngredient (fullStr) {
+    let split = fullStr.split(" ");
+    let amount = "";
+    let unit = "";
+    let name = fullStr;
+
+    let nameIndex = 0;
+    if (split.length > 1) {
+        amount = split[0];
+        nameIndex++;
+    }
+
+    if (split.length > 2 && isUnit(split[1])) {
+        unit = split[1];
+        nameIndex++;
+    }
+
+    name = split.slice(nameIndex).join(" ");
+
+    return {
+        amount,
+        unit,
+        name
+    };
+};
+
+let i = 430;
+
+dom(__dirname + "/downloaded/" + i + ".html", ["http://code.jquery.com/jquery.js"])
+    .then(function (window) {
+        let result = {};
+        let $ = window.$;
 
         result.id = i;
 
@@ -33,16 +63,16 @@ jsdom.env({
 
         result.ingredients = [];
         $("li[itemprop='ingredients']").each(function() {
-            result.ingredients.push(clean($(this)));
+            result.ingredients.push(parseIngredient(clean($(this))));
         });
 
         result.steps = [];
         $("#instructions .instr-step").each(function() {
-            var $this = $(this);
-            var step = clean($this.find(".instr-num"));
-            var title = clean($this.find(".instr-title"));
-            var img = $this.find(".img-max").attr("src");
-            var text = clean($this.find(".instr-txt"));
+            let $this = $(this);
+            let step = clean($this.find(".instr-num"));
+            let title = clean($this.find(".instr-title"));
+            let img = $this.find(".img-max").attr("src");
+            let text = clean($this.find(".instr-txt"));
 
             result.steps.push({
                 step,
@@ -53,5 +83,4 @@ jsdom.env({
         });
 
         console.log(result);
-    }
-});
+    });
