@@ -1,14 +1,39 @@
 let jsdom = require("jsdom");
 let Promise = require("bluebird");
-let promisify = Promise.promisify;
-let dom = promisify(jsdom.env);
+let dom = Promise.promisify(jsdom.env);
+let fs = require("fs");
 
 function clean ($this) {
     return $this.text().replace(/\n/g, '');
 };
 
+let units = [
+    "Cup",
+    "Pound",
+    "Bunch",
+    "Tablespoons",
+    "Teaspoons",
+    "Cloves",
+    "Head",
+    "Ounces",
+    "Teaspoon",
+    "Tablespoon",
+    "Slices",
+    "Ear",
+    "Of",
+    "Inch",
+    "Piece",
+    "Ounce",
+    "Package",
+    "Can",
+]
+
 function isUnit(str) {
-    return false; //TODO
+    let notResult = true;
+    for (unit of units) {
+        notResult = notResult && 0 > str.indexOf(unit);
+    }
+    return !notResult;
 }
 
 function parseIngredient (fullStr) {
@@ -23,8 +48,11 @@ function parseIngredient (fullStr) {
         nameIndex++;
     }
 
-    if (split.length > 2 && isUnit(split[1])) {
-        unit = split[1];
+    for (let i = 1; split.length > i+1 && isUnit(split[i]); i++) {
+        if (i > 1) {
+            unit += " ";
+        }
+        unit += split[i];
         nameIndex++;
     }
 
@@ -37,60 +65,75 @@ function parseIngredient (fullStr) {
     };
 };
 
-let i;
-let djambi = [];
 
-for (i = 430; i < 432; i++) {
-    djambi.push(dom(__dirname + "/downloaded/" + i + ".html", ["http://code.jquery.com/jquery.js"]));
-}
+let big = {};
 
-/**
- * https://theinfosphere.org/Hedonismbot
- */
-Promise.map(djambi, function scrapeAndButterTheOrgyPit (window) {
-    let result = {};
-    let $ = window.$;
+let windowWidth = 20;
+let start = 430;
+let doing = 0;
+let done = 0;
+let stop = 950;
+function doit() {
+    if (start + doing < stop && doing - done < windowWidth) {
+        let i = start + doing;
+        doing++;
 
-    result.id = window.location.href.split("/").slice(-1)[0].split(".")[0];
+        /**
+        * https://theinfosphere.org/Hedonismbot
+        */
+        let djambi = dom(__dirname + "/downloaded/" + i + ".html", ["http://code.jquery.com/jquery.js"]);
+        djambi.then(function scrapeAndButterTheOrgyPit (window) {
+            let result = {};
+            let $ = window.$;
 
-    $("meta[property='og:title']").each(function() {
-        result.title = $(this).attr("content");
-    });
+            result.id = window.location.href.split("/").slice(-1)[0].split(".")[0];
 
-    $("meta[property='og:description']").each(function() {
-        result.description = $(this).attr("content");
-    });
+            $("meta[property='og:title']").each(function() {
+                result.title = $(this).attr("content");
+            });
 
-    $("span[itemprop='calories']").each(function() {
-        result.calories = clean($(this));
-    });
+            $("meta[property='og:description']").each(function() {
+                result.description = $(this).attr("content");
+            });
 
-    $("img.rec-splash-img").each(function() {
-        result.splash = $(this).attr("src");
-    });
+            $("span[itemprop='calories']").each(function() {
+                result.calories = clean($(this));
+            });
 
-    result.ingredients = [];
-    $("li[itemprop='ingredients']").each(function() {
-        result.ingredients.push(parseIngredient(clean($(this))));
-    });
+            $("img.rec-splash-img").each(function() {
+                result.splash = $(this).attr("src");
+            });
 
-    result.steps = [];
-    $("#instructions .instr-step").each(function() {
-        let $this = $(this);
-        let step = clean($this.find(".instr-num"));
-        let title = clean($this.find(".instr-title"));
-        let img = $this.find(".img-max").attr("src");
-        let text = clean($this.find(".instr-txt"));
+            result.ingredients = [];
+            $("li[itemprop='ingredients']").each(function() {
+                result.ingredients.push(parseIngredient(clean($(this))));
+            });
 
-        result.steps.push({
-            step,
-            title,
-            img,
-            text
+            result.steps = [];
+            $("#instructions .instr-step").each(function() {
+                let $this = $(this);
+                let step = clean($this.find(".instr-num"));
+                let title = clean($this.find(".instr-title"));
+                let img = $this.find(".img-max").attr("src");
+                let text = clean($this.find(".instr-txt"));
+
+                result.steps.push({
+                    step,
+                    title,
+                    img,
+                    text
+                });
+            });
+
+            big[i] = result;
+
+            done++;
+            doit();
         });
-    });
-
-    return result;
-}).then(function(done) {
-    console.log(JSON.stringify(done));
-});
+        doit();
+    }
+    if (start + done >= stop) {
+        fs.writeFileSync(__dirname + "/scraped/big.json", JSON.stringify(big));
+    }
+};
+doit();
