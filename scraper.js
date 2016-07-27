@@ -67,6 +67,7 @@ function parseIngredient (fullStr) {
 
 
 let big = {};
+let titles = {};
 
 let windowWidth = 20;
 let start = 430;
@@ -104,6 +105,10 @@ function doit() {
                 result.splash = $(this).attr("src");
             });
 
+            $("meta[itemprop='image thumbnailUrl']").each(function() {
+                result.thumb = $(this).attr("content");
+            });
+
             result.ingredients = [];
             $("li[itemprop='ingredients']").each(function() {
                 result.ingredients.push(parseIngredient(clean($(this))));
@@ -127,13 +132,22 @@ function doit() {
 
             big[i] = result;
 
+            let titled = {};
+            titled.id = result.id;
+            titled.title = result.title;
+            titled.thumb = result.thumb;
+            titles[i] = titled;
+
+            fs.writeFileSync(__dirname + "/scraped/" + i + ".json", JSON.stringify(result, null, "\t"));
+
             done++;
             doit();
         });
         doit();
     }
     if (start + done >= stop) {
-        fs.writeFileSync(__dirname + "/scraped/big.json", JSON.stringify(big));
+        fs.writeFileSync(__dirname + "/scraped/big.json", JSON.stringify(big, null, "\t"));
+        fs.writeFileSync(__dirname + "/scraped/titles.json", JSON.stringify(titles, null, "\t"));
     }
 };
 doit();
