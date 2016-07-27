@@ -44,6 +44,9 @@ for (i = 430; i < 432; i++) {
     djambi.push(dom(__dirname + "/downloaded/" + i + ".html", ["http://code.jquery.com/jquery.js"]));
 }
 
+/**
+ * https://theinfosphere.org/Hedonismbot
+ */
 Promise.map(djambi, function scrapeAndButterTheOrgyPit (window) {
     let result = {};
     let $ = window.$;
