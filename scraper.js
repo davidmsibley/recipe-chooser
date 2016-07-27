@@ -1,6 +1,6 @@
 let jsdom = require("jsdom");
-let bluebird = require("bluebird");
-let promisify = bluebird.promisify;
+let Promise = require("bluebird");
+let promisify = Promise.promisify;
 let dom = promisify(jsdom.env);
 
 function clean ($this) {
@@ -44,7 +44,7 @@ for (i = 430; i < 432; i++) {
     djambi.push(dom(__dirname + "/downloaded/" + i + ".html", ["http://code.jquery.com/jquery.js"]));
 }
 
-bluebird.map(djambi, function scrapeAndButterTheOrgyPit (window) {
+Promise.map(djambi, function scrapeAndButterTheOrgyPit (window) {
     let result = {};
     let $ = window.$;
 
