@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import ml from 'materialize-loader'
 import Ingredient from './Ingredient.vue'
 import Ingredients from './../generatedData/ingredientOrder.json'
 
