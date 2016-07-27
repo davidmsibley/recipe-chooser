@@ -2,7 +2,7 @@
   "name": "recipe-etl",
   "version": "1.0.0",
   "description": "",
-  "main": "downloader.js",
+  "main": "",
   "dependencies": {
     "bluebird": "^3.4.1",
     "jsdom": "^9.4.1",
