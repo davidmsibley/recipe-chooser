@@ -138,7 +138,7 @@ function doit() {
             titled.thumb = result.thumb;
             titles[i] = titled;
 
-            fs.writeFileSync(__dirname + "/scraped/" + i + ".json", JSON.stringify(result, null, "\t"));
+            fs.writeFileSync(__dirname + "/scraped/unit/" + i + ".json", JSON.stringify(result, null, "\t"));
 
             done++;
             doit();

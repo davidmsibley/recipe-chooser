@@ -1,3 +1,4 @@
 node_modules
 downloaded/*.html
 scraped/*.json
+scraped/unit/*.json

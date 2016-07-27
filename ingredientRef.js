@@ -101,7 +101,7 @@ function doit() {
     }
     if (start + done >= stop) {
         fs.writeFileSync(__dirname + "/scraped/ingredientRefs.json", JSON.stringify(ref));
-        let ordered = (([...lookup]).sort(function(a, b) { return b[1].length - a[1].length})).map(function (entry) { return entry[0]});
+        let ordered = (([...lookup]).sort(function(a, b) { return b[1].length - a[1].length})).map(function (entry) { return {name : entry[0], refs : entry[1]}});
         fs.writeFileSync(__dirname + "/scraped/ingredientOrder.json", JSON.stringify(ordered));
     }
 };
