@@ -55,6 +55,22 @@ function doit() {
                 result.ingredients.push(parseIngredient(clean($(this))));
             });
 
+            result.storyPics = [];
+            $("a.js-SubStory").each(function() {
+                let pic = $(this).find("img.img-flex").attr("src");
+                let name = $(this).find("span.story-title").text();
+                result.storyPics.push ({
+                    pic,
+                    name
+                });
+                let ing = result.ingredients.find(function(el) {
+                    return el.name === name;
+                });
+                if (ing) {
+                    ing.pic = pic;
+                }
+            });
+
             result.steps = [];
             $("#instructions .instr-step").each(function() {
                 let $this = $(this);
