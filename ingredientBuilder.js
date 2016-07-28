@@ -29,15 +29,6 @@ let units = [
     "Bottle"
 ]
 
-function isUnit(str) {
-    let notResult = true;
-    for (unit of units) {
-        //TODO try to parseNumber
-        notResult = notResult && 0 > str.indexOf(unit) && str.length < (unit.length + 3);
-    }
-    return !notResult;
-}
-
 let preparations = [
     "Grated",
     "Crushed",
@@ -69,10 +60,13 @@ let preparations = [
     "Granulated"
 ]
 
-function isPreparation(str) {
+function isUnit(str, blackList) {
     let notResult = true;
-    for (prep of preparations) {
-        notResult = notResult && 0 > str.indexOf(prep) && str.length < (prep.length + 3);
+    for (unit of blackList) {
+        //TODO try to parseNumber
+        //I thought I was so clever when I wrote this... ugh.
+        //we're checking things that would invalidate the str from being a unit
+        notResult = notResult && 0 > str.indexOf(unit);
     }
     return !notResult;
 }
@@ -101,14 +95,14 @@ exports.parseIngredient = function (fullStr) {
         nameIndex++;
     }
 
-    for (let start = nameIndex; split.length > nameIndex+1 && isUnit(split[nameIndex]); nameIndex++) {
+    for (let start = nameIndex; split.length > nameIndex+1 && isUnit(split[nameIndex], units); nameIndex++) {
         if (nameIndex > start) {
             unit += " ";
         }
         unit += split[nameIndex];
     }
 
-    for (let start = nameIndex; split.length > nameIndex+1 && isPreparation(split[nameIndex]); nameIndex++) {
+    for (let start = nameIndex; split.length > nameIndex+1 && isUnit(split[nameIndex], preparations); nameIndex++) {
         if (nameIndex > start) {
             preparation += " ";
         }
