@@ -2,68 +2,9 @@ let jsdom = require("jsdom");
 let Promise = require("bluebird");
 let dom = Promise.promisify(jsdom.env);
 let fs = require("fs");
-
-function clean ($this) {
-    return $this.text().replace(/\n/g, '');
-};
-
-let units = [
-    "Cup",
-    "Pound",
-    "Bunch",
-    "Tablespoons",
-    "Teaspoons",
-    "Cloves",
-    "Head",
-    "Ounces",
-    "Teaspoon",
-    "Tablespoon",
-    "Slices",
-    "Ear",
-    "Of",
-    "Inch",
-    "Piece",
-    "Ounce",
-    "Package",
-    "Can",
-]
-
-function isUnit(str) {
-    let notResult = true;
-    for (unit of units) {
-        notResult = notResult && 0 > str.indexOf(unit);
-    }
-    return !notResult;
-}
-
-function parseIngredient (fullStr) {
-    let split = fullStr.split(" ");
-    let amount = "";
-    let unit = "";
-    let name = fullStr;
-
-    let nameIndex = 0;
-    if (split.length > 1) {
-        amount = split[0];
-        nameIndex++;
-    }
-
-    for (let i = 1; split.length > i+1 && isUnit(split[i]); i++) {
-        if (i > 1) {
-            unit += " ";
-        }
-        unit += split[i];
-        nameIndex++;
-    }
-
-    name = split.slice(nameIndex).join(" ");
-
-    return {
-        amount,
-        unit,
-        name
-    };
-};
+let IngredientBuilder = require('./ingredientBuilder');
+let clean = IngredientBuilder.clean;
+let parseIngredient = IngredientBuilder.parseIngredient;
 
 
 let big = {};
