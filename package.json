@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "webpack-dev-server --inline --hot",
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
-    "download": "node downloader.js",
-    "scrape": "node scraper.js && node ingredientRef.js",
-    "push": "rm -rf generatedData/ && cp -r scraped generatedData",
+    "download": "node etl/downloader.js",
+    "scrape": "node etl/scraper.js && node etl/ingredientRef.js",
+    "push": "rm -rf generatedData/ && cp -r etl/scraped generatedData",
     "update": "npm run scrape && npm run push"
   },
   "dependencies": {
