@@ -1,6 +1,9 @@
-
-exports.clean = function ($this) {
-    return $this.text().replace(/\n/g, '');
+/**
+ * Unicode Escaping courtesy of
+ * http://stackoverflow.com/questions/4901133/json-and-escaping-characters
+ */
+exports.clean = function (text) {
+    return text.replace(/\n/g, '').replace(/[\u2028]/g, '');
 };
 
 let units = [

@@ -31,34 +31,34 @@ function doit() {
             result.id = window.location.href.split("/").slice(-1)[0].split(".")[0];
 
             $("meta[property='og:title']").each(function() {
-                result.title = $(this).attr("content");
+                result.title = clean($(this).attr("content"));
             });
 
             $("meta[property='og:description']").each(function() {
-                result.description = $(this).attr("content");
+                result.description = clean($(this).attr("content"));
             });
 
             $("span[itemprop='calories']").each(function() {
-                result.calories = clean($(this));
+                result.calories = clean($(this).text());
             });
 
             $("img.rec-splash-img").each(function() {
-                result.splash = $(this).attr("src");
+                result.splash = clean($(this).attr("src"));
             });
 
             $("meta[itemprop='image thumbnailUrl']").each(function() {
-                result.thumb = $(this).attr("content");
+                result.thumb = clean($(this).attr("content"));
             });
 
             result.ingredients = [];
             $("li[itemprop='ingredients']").each(function() {
-                result.ingredients.push(parseIngredient(clean($(this))));
+                result.ingredients.push(parseIngredient(clean($(this).text())));
             });
 
             result.storyPics = [];
             $("a.js-SubStory").each(function() {
-                let pic = $(this).find("img.img-flex").attr("src");
-                let name = $(this).find("span.story-title").text();
+                let pic = clean($(this).find("img.img-flex").attr("src"));
+                let name = clean($(this).find("span.story-title").text());
                 result.storyPics.push ({
                     pic,
                     name
@@ -74,10 +74,10 @@ function doit() {
             result.steps = [];
             $("#instructions .instr-step").each(function() {
                 let $this = $(this);
-                let step = clean($this.find(".instr-num"));
-                let title = clean($this.find(".instr-title"));
-                let img = $this.find(".img-max").attr("src");
-                let text = clean($this.find(".instr-txt"));
+                let step = clean($this.find(".instr-num").text());
+                let title = clean($this.find(".instr-title").text());
+                let img = clean($this.find(".img-max").attr("src"));
+                let text = clean($this.find(".instr-txt").text());
 
                 result.steps.push({
                     step,
