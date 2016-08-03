@@ -8,7 +8,7 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules",
     "download": "node downloader.js",
     "scrape": "node scraper.js && node ingredientRef.js",
-    "push": "rm -rf ../recipe-chooser/generatedData/ && cp -r scraped ../recipe-chooser/generatedData",
+    "push": "rm -rf generatedData/ && cp -r scraped generatedData",
     "update": "npm run scrape && npm run push"
   },
   "dependencies": {
