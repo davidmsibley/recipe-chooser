@@ -10,7 +10,11 @@
   },
   "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "download": "node downloader.js",
+    "scrape": "node scraper.js && node ingredientRef.js",
+    "push": "rm -rf ../recipe-chooser/generatedData/ && cp -r scraped ../recipe-chooser/generatedData",
+    "update": "npm run scrape && npm run push"
   },
   "author": "",
   "license": "ISC"
