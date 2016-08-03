@@ -3,3 +3,6 @@ node_modules/
 dist/
 npm-debug.log
 generatedData/
+downloaded/*.html
+scraped/*.json
+scraped/unit/*.json
